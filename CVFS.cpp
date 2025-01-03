@@ -164,7 +164,7 @@ void man(char *name)
     else if (strcmp(name, "fstat") == 0)
     {
         printf("Description : Used to display information of file\n");
-        printf("Usage : stat File_Descriptor\n");
+        printf("Usage : fstat File_Descriptor\n");
     }
     else if (strcmp(name, "truncate") == 0)
     {
@@ -223,7 +223,7 @@ void DisplayHelp()
     printf("exit : To Terminate the file system\n");
     printf("stat : To Display information of file using name\n");
     printf("fstat : To Display information of file using file descriptor\n");
-    printf("trucante : To remove all data the file\n");
+    printf("truncate : To remove all data the file\n");
     printf("rm : To delete the file\n");
 }
 
@@ -386,7 +386,7 @@ int CreateFile(char *name, int permission)
 
     while (i < 50)
     {
-        if (UFDTArr[i].ptrfiletable = NULL)
+        if (UFDTArr[i].ptrfiletable == NULL)
             break;
         i++;
     }
@@ -433,13 +433,14 @@ int rm_File(char *name)
 
     if (UFDTArr[fd].ptrfiletable->ptrinode->LinkCount == 0)
     {
-        UFDTArr[fd].ptrfiletable->ptrinode->FileType == 0;
-        // free(UFDTArr[fd].ptrfiletable->ptrinode->Buffer);
+        UFDTArr[fd].ptrfiletable->ptrinode->FileType = 0;
+        free(UFDTArr[fd].ptrfiletable->ptrinode->Buffer);
         free(UFDTArr[fd].ptrfiletable);
     }
 
     UFDTArr[fd].ptrfiletable = NULL;
     (SUPERBLOCKobj.FreeInode)++;
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -471,24 +472,20 @@ int ReadFile(int fd, char *arr, int isize)
         return -2;
 
     if (UFDTArr[fd].ptrfiletable->readoffset == UFDTArr[fd].ptrfiletable->ptrinode->FileActualSize)
-        ;
-    return -3;
+        return -3;
 
     if (UFDTArr[fd].ptrfiletable->ptrinode->FileType != REGULAR)
-        ;
-    return -4;
+        return -4;
 
     read_size = (UFDTArr[fd].ptrfiletable->ptrinode->FileActualSize) - (UFDTArr[fd].ptrfiletable->readoffset);
     if (read_size < isize)
     {
         strncpy(arr, (UFDTArr[fd].ptrfiletable->ptrinode->Buffer) + (UFDTArr[fd].ptrfiletable->readoffset), read_size);
-
         UFDTArr[fd].ptrfiletable->readoffset = UFDTArr[fd].ptrfiletable->readoffset + read_size;
     }
     else
     {
         strncpy(arr, (UFDTArr[fd].ptrfiletable->ptrinode->Buffer) + (UFDTArr[fd].ptrfiletable->readoffset), isize);
-
         UFDTArr[fd].ptrfiletable->readoffset = UFDTArr[fd].ptrfiletable->readoffset + isize;
     }
 
@@ -732,6 +729,7 @@ int LseekFile(int fd, int size, int from)
             (UFDTArr[fd].ptrfiletable->writeoffset) = (UFDTArr[fd].ptrfiletable->ptrinode->FileActualSize) + size;
         }
     }
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -755,7 +753,7 @@ void ls_file()
     }
 
     printf("\nFile Name\tInode number\tFile size\tLink count\n");
-    printf("-----------------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------------\n");
     while (temp != NULL)
     {
         if (temp->FileType != 0)
@@ -764,7 +762,7 @@ void ls_file()
         }
         temp = temp->next;
     }
-    printf("-----------------------------------------------------------------------\n");
+    printf("-------------------------------------------------------------------\n");
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -781,7 +779,6 @@ void ls_file()
 int fstat_file(int fd)
 {
     PINODE temp = head;
-    int i = 0;
 
     if (fd < 0)
         return -1;
@@ -791,7 +788,7 @@ int fstat_file(int fd)
 
     temp = UFDTArr[fd].ptrfiletable->ptrinode;
 
-    printf("\n---------------- Statistical Information about file ---------------\n");
+    printf("\n---------------Statistical Information about file-------------\n");
     printf("File name : %s\n", temp->FileName);
     printf("Inode Number %d\n", temp->InodeNumber);
     printf("File size : %d\n", temp->FileSize);
@@ -802,10 +799,10 @@ int fstat_file(int fd)
     if (temp->permission == 1)
         printf("File Permission : Read only\n");
     else if (temp->permission == 2)
-        printf("File Permission : Write only\n");
+        printf("File Permission : Write\n");
     else if (temp->permission == 3)
         printf("File Permission : Read & Write\n");
-    printf("-----------------------------------------------------------------------\n\n");
+    printf("--------------------------------------------------------------\n\n");
 
     return 0;
 }
@@ -823,7 +820,6 @@ int fstat_file(int fd)
 int stat_file(char *name)
 {
     PINODE temp = head;
-    int i = 0;
 
     if (name == NULL)
         return -1;
@@ -838,7 +834,7 @@ int stat_file(char *name)
     if (temp == NULL)
         return -2;
 
-    printf("\n----------Statistical Information about file----------\n");
+    printf("\n---------------Statistical Information about file-------------\n");
     printf("File name : %s\n", temp->FileName);
     printf("Inode Number %d\n", temp->InodeNumber);
     printf("File size : %d\n", temp->FileSize);
@@ -849,10 +845,10 @@ int stat_file(char *name)
     if (temp->permission == 1)
         printf("File Permission : Read only\n");
     else if (temp->permission == 2)
-        printf("File Permission : Write only\n");
+        printf("File Permission : Write\n");
     else if (temp->permission == 3)
         printf("File Permission : Read & Write\n");
-    printf("------------------------------------------------------------------\n\n");
+    printf("--------------------------------------------------------------\n\n");
 
     return 0;
 }
@@ -876,6 +872,7 @@ int truncate_File(char *name)
     UFDTArr[fd].ptrfiletable->readoffset = 0;
     UFDTArr[fd].ptrfiletable->writeoffset = 0;
     UFDTArr[fd].ptrfiletable->ptrinode->FileActualSize = 0;
+    return 0;
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1107,7 +1104,6 @@ int main()
         }
         else
         {
-            printf("\nERROR : Command not found !!!\n");
             continue;
         }
     }
