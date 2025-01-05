@@ -149,7 +149,7 @@ void man(char *name)
     else if (strcmp(name, "write") == 0)
     {
         printf("Description : Used to write into regular file\n");
-        printf("Usage : write File_name\n After this write the data that we want to write\n");
+        printf("Usage : write File_name\nAfter this write the data that we want to write\n");
     }
     else if (strcmp(name, "ls") == 0)
     {

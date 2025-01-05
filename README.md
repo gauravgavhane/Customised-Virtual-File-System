@@ -9,6 +9,21 @@ The Customized Virtual File System (CVFS) project implements a virtual file syst
 In this project we implement all necessary data structures of file system like Incore Inode
 Table, File Table, UAREA, User File Descriptor table(UFDT).
 
+## Technology Used
+- Programming Language: C++
+
+## User Interface Used
+- Command Line Interface (CLI)
+
+## Platform Required
+- Operating System: Linux or Windows
+- Additional software: C++ environment set up
+
+## Hardware Requirements
+- CPU: Any modern multi-core processor
+- RAM: Minimum 4GB (more depending on the size of the file system and operations)
+- Storage: Sufficient storage to handle the virtual file system's data and metadata 
+
 ## Features
 - **File Operations**: Create, read, write, delete, and truncate files.
 - **File Types**: Support for regular.
